@@ -5,8 +5,8 @@ import (
 	"math"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/model"
 	elastic "gopkg.in/olivere/elastic.v3"
 )

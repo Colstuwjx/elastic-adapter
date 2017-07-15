@@ -24,11 +24,10 @@ import (
 	"sync"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
-
 	"github.com/gogo/protobuf/proto"
 	"github.com/golang/snappy"
 	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/model"
 
 	"github.com/Colstuwjx/elastic-adapter/elasticsearch"
@@ -206,7 +205,7 @@ func serve(addr string, writers []writer, readers []reader) error {
 		var resp *remote.ReadResponse
 		resp, err = reader.Read(&req)
 		if err != nil {
-			// log.With("query", req).With("storage", reader.Name()).With("err", err).Warnf("Error executing query")
+			log.With("query", req).With("storage", reader.Name()).With("err", err).Warnf("Error executing query")
 			http.Error(w, err.Error(), http.StatusInternalServerError)
 			return
 		}
@@ -254,7 +253,7 @@ func sendSamples(w writer, samples model.Samples) {
 	err := w.Write(samples)
 	duration := time.Since(begin).Seconds()
 	if err != nil {
-		// log.With("num_samples", len(samples)).With("storage", w.Name()).With("err", err).Warnf("Error sending samples to remote storage")
+		log.With("num_samples", len(samples)).With("storage", w.Name()).With("err", err).Warnf("Error sending samples to remote storage")
 		failedSamples.WithLabelValues(w.Name()).Add(float64(len(samples)))
 	}
 	sentSamples.WithLabelValues(w.Name()).Add(float64(len(samples)))
