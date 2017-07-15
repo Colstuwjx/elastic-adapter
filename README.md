@@ -1,6 +1,6 @@
 # Elasticsearch Remote storage adapter
 
-Elastic write adapter for Prometheus remote storage, more details refer to: (Prometheus remote storage documentation)[https://github.com/prometheus/prometheus/tree/master/documentation/examples/remote_storage/remote_storage_adapter]
+Elastic write adapter for Prometheus remote storage, more details refer to: [Prometheus remote storage documentation](https://github.com/prometheus/prometheus/tree/master/documentation/examples/remote_storage/remote_storage_adapter)
 
 It will receive prometheus samples and send batch requests to [Elastic](https://www.elastic.co/)
 
