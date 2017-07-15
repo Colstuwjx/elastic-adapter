@@ -1,9 +1,8 @@
-# Remote storage adapter
+# Elasticsearch Remote storage adapter
 
-This is a write adapter that receives samples via Prometheus's remote write
-protocol and stores them in Elasticsearch.
-It is meant as a replacement for the built-in specific remote storage implementations
-that have been removed from Prometheus.
+Elastic write adapter for Prometheus remote storage, more details refer to: https://github.com/prometheus/prometheus/tree/master/documentation/examples/remote_storage/remote_storage_adapter
+
+It will receive prometheus samples and send batch requests to [Elastic](https://www.elastic.co/)
 
 ## Building
 
@@ -13,8 +12,6 @@ go build
 
 ## Running
 
-Elasticsearch example:
-
 ```
 ./elastic-adapter -elasticsearch-url=http://localhost:9200/ -elasticsearch.max-retries=1 -elasticsearch.index-perfix=prometheus -elasticsearch.type=prom-metric
 ```
@@ -22,7 +19,7 @@ Elasticsearch example:
 To show all flags:
 
 ```
-./remote_storage_adapter -h
+./elastic-adapter -h
 ```
 
 ## Configuring Prometheus
@@ -30,11 +27,11 @@ To show all flags:
 To configure Prometheus to send samples to this binary, add the following to your `prometheus.yml`:
 
 ```yaml
-# Remote write configuration (for Graphite, OpenTSDB, or InfluxDB).
+# Remote write configuration.
 remote_write:
   - url: "http://localhost:9201/write"
 
-# Remote read configuration (for InfluxDB only at the moment).
+# Remote read configuration (TODO: remote read for elastic not implement yet).
 remote_read:
   - url: "http://localhost:9201/read"
 ```
