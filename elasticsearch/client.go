@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"math"
 	"time"
+	"context"
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/log"
 	"github.com/prometheus/common/model"
-	elastic "gopkg.in/olivere/elastic.v3"
+	"github.com/olivere/elastic"
 )
 
 // Client allows sending batches of Prometheus samples to ElasticSearch.
@@ -39,7 +40,7 @@ func generateEsIndex(esIndexPerfix string) string {
 // NewClient return a Client which contains an elasticsearch client.
 // Now, it generates the real esIndex formatted with `<esIndexPerfix>-YYYY-mm-dd`.
 func NewClient(url string, maxRetries int, esIndexPerfix, esType string, timeout time.Duration) *Client {
-	client, err := elastic.NewClient(
+	client, err := elastic.NewSimpleClient(
 		elastic.SetURL(url),
 		elastic.SetMaxRetries(maxRetries),
 		// TODO: add basic auth support.
@@ -50,7 +51,7 @@ func NewClient(url string, maxRetries int, esIndexPerfix, esType string, timeout
 
 	// Use the IndexExists service to check if a specified index exists.
 	esIndex := generateEsIndex(esIndexPerfix)
-	exists, err := client.IndexExists(esIndex).Do()
+	exists, err := client.IndexExists(esIndex).Do(context.Background())
 	if err != nil {
 		log.Errorf("index %v is not found in Elastic.", esIndex)
 	}
@@ -58,7 +59,7 @@ func NewClient(url string, maxRetries int, esIndexPerfix, esType string, timeout
 	// Create an index if it is not exist.
 	if !exists {
 		// Create a new index.
-		createIndex, err := client.CreateIndex(esIndex).Do()
+		createIndex, err := client.CreateIndex(esIndex).Do(context.Background())
 		if err != nil {
 			log.Fatalf("failed to create index %v, err: %v", esIndex, err)
 		}
@@ -112,7 +113,7 @@ func (c *Client) Write(samples model.Samples) error {
 		bulkRequest = bulkRequest.Add(indexRq)
 	}
 
-	bulkResponse, err := bulkRequest.Do()
+	bulkResponse, err := bulkRequest.Do(context.Background())
 	if err != nil {
 		return err
 	}
