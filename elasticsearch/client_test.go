@@ -12,7 +12,7 @@ import (
 
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/common/model"
-	elastic "gopkg.in/olivere/elastic.v3"
+	"github.com/olivere/elastic"
 )
 
 func mockElastic(url string) (*elastic.Client, error) {
